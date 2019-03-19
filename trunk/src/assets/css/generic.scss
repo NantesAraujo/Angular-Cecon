@@ -1,0 +1,25 @@
+body {
+  margin: 0;
+  padding: 0;
+  padding-top: 1px;
+  padding-left: 0;
+  width: 100%;
+  background: #edeff1!important;
+}
+
+input,
+p,
+button,
+select,
+label {
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 12px !important;
+}
+
+button {
+  font-size: 11px !important;
+}
+
+.row {
+  width: 100%;
+}

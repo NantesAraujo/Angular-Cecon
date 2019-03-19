@@ -1,0 +1,46 @@
+@import "~bootstrap/scss/bootstrap.scss";
+@import "../../../../assets/css/components/buttons.scss";
+
+
+.card-situacao-convenente {
+  margin-top: 20px;
+  margin-left: 20px;
+
+  .btn-limpar {
+    border-color: #b7b7b7;
+    background-color: #ececec;
+  }
+
+  p-table {
+    ::ng-deep {
+      .ui-table {
+        font-size: 10px;
+        margin-top: 5px !important;
+      }
+
+      .ui-paginator-bottom {
+        font-size: 10px;
+      }
+    }
+  }
+
+  p-autoComplete {
+    ::ng-deep {
+      input,
+      .ui-autocomplete {
+        width: 95%;
+        height: 32px;
+        margin-bottom: 5px;
+      }
+
+      .ui-autocomplete-dropdown {
+        // @extend .btn-light;
+        @extend .cecon-btn-ligth;
+
+        .ui-button-icon-left:before {
+          content: "\e908" !important;
+        }
+      }
+    }
+  }
+}

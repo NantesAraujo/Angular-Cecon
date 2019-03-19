@@ -1,0 +1,163 @@
+<div class="cecon-card card-situacao-convenente">
+  <form [formGroup]="buscaSituacaoConvenenteForm">
+    <div class="cecon-card-titulo">
+      <p>Consulta Situação Convenente</p>
+      <hr>
+    </div>
+
+    <div class="row">
+      <div class="col-2" *ngFor="let tipoConsulta of tiposConsulta | keyvalue">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" [(ngModel)]="tipoConsultaEscolhida" (click)="limpar()"
+            [ngModelOptions]="{standalone: true}" id="{{tipoConsulta.value.id}}" value="{{tipoConsulta.value.tipo}}"
+            name="tipoConsultaEscolhida">
+          <label class="form-check-label" for="{{tipoConsulta.value.id}}">
+            {{ tipoConsulta.value.label}}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row"
+      *ngIf="tipoConsultaEscolhida === tiposConsulta.RENOVACAO.tipo || tipoConsultaEscolhida === tiposConsulta.SITUACAO.tipo">
+      <div class="col-2" *ngFor="let tipoConvenente of tiposConvenente | keyvalue">
+        <div class="form-check">
+          <input id="{{tipoConvenente.value.id}}" value="{{tipoConvenente.value.tipo}}" class="form-check-input"
+            (click)="limpar()" type="radio" [(ngModel)]="tipoConvenenteEscolhido" name="tipoConvenenteEscolhido"
+            [ngModelOptions]="{standalone: true}">
+          <label class="form-check-label" for="{{tipoConvenente.value.id}}">
+            {{tipoConvenente.value.tipo}}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="divInscricao" *ngIf="tipoConsultaEscolhida === tiposConsulta.INSCRICAO.tipo">
+      <select class="form-control" name="natureza" formControlName="natureza"
+        [ngClass]="{'cecon-card-invalid-validation-input': submitted && isFormInvalido() }">
+        <option [ngValue]="null" selected disabled>Selecione a Natureza</option>
+        <option *ngFor="let natureza of naturezas" [ngValue]="natureza.nome">{{natureza.nome}}</option>
+      </select>
+
+      <div *ngIf="submitted && getForm.natureza.errors" class="cecon-card-invalid-validation-label">
+        <div *ngIf="getForm.natureza.errors.required">
+          Necessário informar a Natureza
+        </div>
+      </div>
+    </div>
+
+    <div class="divRenovacao" *ngIf="tipoConsultaEscolhida === tiposConsulta.RENOVACAO.tipo">
+      <div *ngIf="tipoConvenenteEscolhido === 'CNPJ'">
+        <p-autoComplete id="autocomplete-cnpj" placeholder="CNPJ" formControlName="cnpj" ceconMask="cnpj"
+          (completeMethod)="searchSuggestionsByCNPJ($event)" [suggestions]="suggestionsCNPJ" [dropdown]="true"
+          [ngClass]="{'cecon-card-invalid-validation-input': submitted && isFormInvalido() }">
+        </p-autoComplete><br>
+
+        <p-autoComplete formControlName="razao_social" (completeMethod)="searchSuggestionsByRazaoSocial($event)" [suggestions]="suggestionsRazaoSocial"
+          [dropdown]="true" [ngClass]="{'cecon-card-invalid-validation-input': submitted && isFormInvalido() }"
+          placeholder="Razão Social">
+        </p-autoComplete>
+
+        <div *ngIf="submitted && isFormInvalido()" class="cecon-card-invalid-validation-label">
+          Necessário informar o CNPJ ou a Razão Social
+        </div>
+      </div>
+
+      <div *ngIf="tipoConvenenteEscolhido === 'CPF'">
+        <p-autoComplete id="autocomplete-cpf" [suggestions]="suggestionsCPF" ceconMask="cpf" formControlName="cpf"
+          (completeMethod)="searchSuggestionsByCPF($event)" [dropdown]="true"
+          [ngClass]="{'cecon-card-invalid-validation-input': submitted && isFormInvalido() }" placeholder="CPF">
+        </p-autoComplete>
+
+        <div *ngIf="submitted && isFormInvalido() " class="cecon-card-invalid-validation-label">
+          <div *ngIf="getForm.cpf.errors.required">
+            Necessário informar o CPF
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divSituacao" *ngIf="tipoConsultaEscolhida === tiposConsulta.SITUACAO.tipo">
+      <div *ngIf="tipoConvenenteEscolhido === 'CNPJ'">
+        <input id="input-cnpj" name="login" formControlName="cnpj" type="text" placeholder="CNPJ" class="form-control"
+          ceconMask="cnpj" [ngClass]="{'cecon-card-invalid-validation-input': submitted && isFormInvalido() }" />
+
+        <div *ngIf="submitted && isFormInvalido()" class="cecon-card-invalid-validation-label">
+          <div *ngIf="getForm.cnpj.errors.required">
+            Necessário informar o CNPJ
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="tipoConvenenteEscolhido === 'CPF'">
+        <input id="input-cpf" name="login" formControlName="cpf" type="text" placeholder="CPF" class="form-control"
+          ceconMask="cpf" [ngClass]="{'cecon-card-invalid-validation-input': submitted && isFormInvalido() }" />
+
+        <div *ngIf="submitted && getForm.cpf.errors " class="cecon-card-invalid-validation-label">
+          <div *ngIf="submitted && isFormInvalido()">
+            Necessário informar o CPF
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cecon-card-footer-buttons">
+      <button class="btn btn-success" (click)="buscar()">
+        <i class="fa fa-search"></i>
+        Pesquisar
+      </button>
+      <button class="btn cecon-btn-ligth" (click)="limpar()">
+        <i class="far fa-trash-alt"></i>
+        Limpar
+      </button>
+    </div>
+  </form>
+
+  <div class="resultado-busca" *ngIf="exibirResultado">
+    <div *ngIf="tipoConsultaEscolhida === tiposConsulta.RENOVACAO.tipo">
+      <hr>
+      <div class="cecon-card-titulo">
+        <p>Lista de Vigências</p>
+      </div>
+
+      <p-table [value]="listaVigencia" [style]="{'margin-top':'20px'}" [rows]="10" [paginator]="true" [pageLinks]="3"
+        [responsive]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Data Emissão</th>
+            <th>Data Vencimento</th>
+            <th>Data Fim Renovação</th>
+            <th>Número C. Cad.</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-vigencia>
+          <tr>
+            <td>{{vigencia.dataEmissao}}</td>
+            <td>{{vigencia.dataVencimento}}</td>
+            <td>{{vigencia.dataFimRenovacao}}</td>
+            <td>{{vigencia.numeroCCad}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <hr>
+    <div class="cecon-card-titulo">
+      <p>Lista de Documentos</p>
+    </div>
+
+    <p-table [value]="documentos" [style]="{'margin-top':'20px'}" [rows]="10" [paginator]="true" [pageLinks]="5"
+      [responsive]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Documento</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-doc>
+        <tr>
+          <td>{{doc.nome}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

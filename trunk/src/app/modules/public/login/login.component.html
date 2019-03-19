@@ -1,0 +1,45 @@
+<div class="cecon-card card-login">
+  <form (ngSubmit)="login()" [formGroup]="loginForm">
+    <div class="cecon-card-titulo">
+      <p>Acesse o sistema</p>
+      <hr>
+    </div>
+    <div>
+      <input name="login" formControlName="login" type="text" placeholder="Informe seu Login" class="form-control"
+        [ngClass]="{'cecon-card-invalid-validation-input': submitted && isInputInvalido(getForm.login) }" />
+
+      <div *ngIf="submitted && isInputInvalido(getForm.login) " class="cecon-card-invalid-validation-label">
+        <div *ngIf="getForm.login.errors.required">
+          Necessário informar o Login
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <input name="senha" formControlName="senha" type="password" placeholder="Informe sua Senha" class="form-control"
+        [ngClass]="{'cecon-card-invalid-validation-input': submitted && isInputInvalido(getForm.senha) }" />
+
+      <div *ngIf="submitted && isInputInvalido(getForm.senha) " class="cecon-card-invalid-validation-label">
+        <div *ngIf="getForm.senha.errors.required">
+          Necessário informar a Senha
+        </div>
+      </div>
+    </div>
+
+    <select class="form-control" formControlName="dominio" name="dominio"
+      [ngClass]="{'cecon-card-invalid-validation-input': submitted && isInputInvalido(getForm.dominio)}">
+      <option [ngValue]="null" selected disabled>Selecione o Domínio</option>
+      <option *ngFor="let dominio of dominios" [ngValue]="dominio.nome">{{dominio.nome}}</option>
+    </select>
+
+    <div *ngIf="submitted && isInputInvalido(getForm.dominio)" class="cecon-card-invalid-validation-label">
+      <div *ngIf="getForm.dominio.errors.required">
+        Necessário informar o Domínio
+      </div>
+    </div>
+
+    <div class="cecon-card-footer-buttons">
+      <button type="submit" class="btn btn-success"> Login </button>
+    </div>
+  </form>
+</div>
